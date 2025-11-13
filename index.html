@@ -1,72 +1,934 @@
-<!DOCTYPE html>
-<html lang="fa">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>خوش آمدید</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            text-align: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        .welcome-container {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 40px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-        }
-        p {
-            font-size: 1.2em;
-            margin-bottom: 30px;
-        }
-        .btn {
-            background: #ff6b6b;
-            color: white;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1em;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            transition: transform 0.3s;
-        }
-        .btn:hover {
-            transform: scale(1.05);
-        }
-    </style>
-</head>
-<body>
-    <div class="welcome-container">
-        <h1>🎉 خوش آمدید!</h1>
-        <p>به اپلیکیشن ما خوش آمدید. از حضور شما خوشحالیم!</p>
-        <a href="https://t.me/your_bot" class="btn">بازگشت به ربات</a>
+{% extends "base.html" %}
+{% block title %}{{ _('داشبورد') }}{% endblock %}
+{% block page_header %}{{ _('داشبورد کاربر') }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- آمار کلی -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card shadow-lg border-0 rounded-4 h-100 modern-card">
+            <div class="card-body gradient-purple text-white rounded-4 p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-white-50">{{ _('تعداد پست‌ها') }}</h6>
+                        <h3 class="mb-0 text-white">{{ post_count }}</h3>
+                    </div>
+                    <div class="icon-circle bg-white text-primary">
+                        <i class="fas fa-file-alt fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <script>
-        // بررسی اگر از طریق deep link آمده‌ایم
-        const urlParams = new URLSearchParams(window.location.search);
-        const source = urlParams.get('source');
-        
-        if (source === 'telegram') {
-            document.querySelector('h1').textContent = '🎉 از طریق تلگرام خوش آمدید!';
-        }
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card shadow-lg border-0 rounded-4 h-100 modern-card">
+            <div class="card-body gradient-blue text-white rounded-4 p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-white-50">{{ _('پیام‌های ارسالی') }}</h6>
+                        <h3 class="mb-0 text-white">{{ unread_messages }}</h3>
+                    </div>
+                    <div class="icon-circle bg-white text-success">
+                        <i class="fas fa-envelope fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        console.log('اپلیکیشن با موفقیت لود شد!');
-    </script>
-</body>
-</html>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card shadow-lg border-0 rounded-4 h-100 modern-card">
+            <div class="card-body gradient-purple-light text-white rounded-4 p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-white-50">{{ _('صندوق پیام') }}</h6>
+                        <h3 class="mb-0 text-white">{{ unread_notifications }}</h3>
+                    </div>
+                    <div class="icon-circle bg-white text-info">
+                        <i class="fas fa-bell fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- کارت آخرین لاگین -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card shadow-lg border-0 rounded-4 h-100 modern-card">
+            <div class="card-body gradient-dark text-white rounded-4 p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-white-50">{{ _('لاگین قبلی') }}</h6>
+                        <h6 class="mb-0 text-white">
+                            {% if last_login %}
+                                {{ last_login }}
+                            {% else %}
+                                {{ _('نامشخص') }}
+                            {% endif %}
+                        </h6>
+                        <small class="text-white-50 mt-2">
+                            {{ _('لاگین فعلی') }}: 
+                            {% if current_login %}
+                                {{ current_login }}
+                            {% else %}
+                                {{ _('هم اکنون') }}
+                            {% endif %}
+                        </small>
+                    </div>
+                    <div class="icon-circle bg-white text-warning">
+                        <i class="fas fa-sign-in-alt fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- نمودار فروش -->
+    <div class="col-lg-8 mb-4">
+        <div class="card shadow-lg border-0 rounded-4 h-100 modern-card">
+            <div class="card-header gradient-purple text-white py-3 rounded-top-4">
+                <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i> {{ _('نمودار فروش هفتگی') }}</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="height: 250px;">
+                    <canvas id="userSalesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- فعالیت هفتگی -->
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow-lg border-0 rounded-4 h-100 modern-card">
+            <div class="card-header gradient-blue text-white py-3 rounded-top-4">
+                <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i> {{ _('فعالیت هفتگی') }}</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="activityChart" style="height: 250px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- جدول آمار پست‌ها -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card shadow-lg border-0 rounded-4 modern-card">
+            <div class="card-header gradient-purple-light text-white py-3 rounded-top-4 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i> {{ _('آمار بازدید و کلیک پست‌ها') }}</h5>
+                <div class="d-flex align-items-center">
+                    <span class="me-3"> {{ _('بازدید کل') }}: <strong> {{ total_views }} </strong></span>
+                    <span> {{ _('کلیک کل') }}: <strong> {{ total_clicks }} </strong></span>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- فیلترها -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <select class="form-select modern-select" id="statsFilter" onchange="filterStats(this.value)">
+                            <option value="newest" {% if sort_filter == 'newest' %}selected{% endif %}>{{ _('جدید به قدیم') }}</option>
+                            <option value="oldest" {% if sort_filter == 'oldest' %}selected{% endif %}>{{ _('قدیم به جدید') }}</option>
+                            <option value="most_views" {% if sort_filter == 'most_views' %}selected{% endif %}>{{ _('بیشترین بازدید') }}</option>
+                            <option value="least_views" {% if sort_filter == 'least_views' %}selected{% endif %}>{{ _('کمترین بازدید') }}</option>
+                            <option value="most_clicks" {% if sort_filter == 'most_clicks' %}selected{% endif %}>{{ _('بیشترین کلیک') }}</option>
+                            <option value="least_clicks" {% if sort_filter == 'least_clicks' %}selected{% endif %}>{{ _('کمترین کلیک') }}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- نمودار -->
+                <div class="chart-container mb-4" style="height: 300px;">
+                    <canvas id="postStatsChart"></canvas>
+                </div>
+
+                <!-- جدول -->
+                <div class="table-responsive">
+                    <table class="table table-hover modern-table">
+                        <thead>
+                            <tr>
+                                <th>{{ _('عنوان پست') }}</th>
+                                <th>{{ _('تعداد بازدید') }}</th>
+                                <th>{{ _('تعداد کلیک') }}</th>
+                                <th>{{ _('تاریخ ایجاد') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in posts_with_stats %}
+                            <tr>
+                                <td>{{ item.post.title }}</td>
+                                <td>{{ item.views }}</td>
+                                <td>{{ item.clicks }}</td>
+                                <td>{{ item.post.jalali_date }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center">{{ _('هیچ پستی یافت نشد') }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- پست‌های اخیر -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-lg border-0 rounded-4 h-100 modern-card">
+            <div class="card-header gradient-purple-light text-white py-3 rounded-top-4">
+                <h5 class="mb-0"><i class="fas fa-clock me-2"></i> {{ _('پست‌های اخیر') }}</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    {% for post in recent_posts %}
+                    <div class="list-group-item border-0 d-flex justify-content-between align-items-center modern-list-item">
+                        <span class="fw-bold">{{ post.title }}</span>
+                        <small class="text-muted">{{ post.jalali_date }}</small>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- وضعیت پلن -->
+    {% if not current_user.is_admin %}
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-lg border-0 rounded-4 h-100 modern-card">
+            <div class="card-header gradient-dark text-white py-3 rounded-top-4">
+                <h5 class="mb-0"><i class="fas fa-crown me-2"></i> {{ _('وضعیت پلن') }}</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-{{ 'success' if current_user.is_plan_active else 'danger' }} rounded-3 modern-alert">
+                    <i class="fas fa-{{ 'check-circle' if current_user.is_plan_active else 'exclamation-triangle' }} me-2"></i>
+                    <strong>{{ _('وضعیت پلن') }}:</strong> 
+                    {{ _('فعال') if current_user.is_plan_active else _('منقضی شده') }}
+                </div>
+                
+                {% if current_user.is_plan_active %}
+                <div class="progress mb-3 modern-progress" style="height: 25px; border-radius: 12px;">
+                    <div class="progress-bar bg-{{ 'success' if current_user.plan_remaining_days > 7 else 'warning' }}" 
+                         role="progressbar" 
+                         style="width: {{ (current_user.plan_remaining_days / current_user.plan_duration * 100) if current_user.plan_duration > 0 else 0 }}%"
+                         aria-valuenow="{{ current_user.plan_remaining_days }}" 
+                         aria-valuemin="0" 
+                         aria-valuemax="{{ current_user.plan_duration }}">
+                        {{ current_user.plan_remaining_days }} {{ _('روز باقیمانده') }}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <p><strong>{{ _('مدت پلن') }}:</strong> {{ current_user.plan_duration }} {{ _('روز') }}</p>
+                <p><strong>{{ _('تاریخ پایان') }}:</strong> 
+                    {% if plan_end_display %}
+                        {{ plan_end_display }}<br>
+                        <p style="color: #f8f9fa !important;">
+                            {% if get_locale() == 'fa' %}
+                                زمان پایان : {{ plan_end_time_display }}
+                            {% else %}
+                                End Time : {{ plan_end_time_display }}
+                            {% endif %}
+                        </p>
+                    {% else %}
+                        {{ _('نامشخص') }}
+                    {% endif %}
+                </p>
+                
+                {% if not current_user.is_plan_active %}
+                <div class="alert alert-warning rounded-3 modern-alert">
+                    <i class="fas fa-info-circle me-2"></i>
+                    {{ _('پلن شما منقضی شده است. برای تمدید با ادمین تماس بگیرید.') }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal برای درخواست شارژ -->
+<div class="modal fade" id="chargeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 modern-modal">
+            <div class="modal-header gradient-dark text-white rounded-top-4">
+                <h5 class="modal-title">
+                    <i class="fas fa-battery-quarter me-2"></i>{{ _('شارژ پنل') }}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <div class="mb-3">
+                    <i class="fas fa-exclamation-triangle fa-3x text-warning"></i>
+                </div>
+                <h4 class="text-primary mb-3">{{ _('پلن شما منقضی شده است!') }}</h4>
+                <p class="mb-4">{{ _('برای دسترسی به تمامی امکانات پنل، including ایجاد پست جدید، باید حساب خود را شارژ کنید.') }}</p>
+                <p class="fw-bold">{{ _('می‌خواهید پنل خود را شارژ کنید؟') }}</p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" class="btn btn-secondary rounded-3 px-4 modern-btn" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>{{ _('خیر') }}
+                </button>
+                <button type="button" class="btn btn-primary rounded-3 px-4 modern-btn" id="confirmCharge">
+                    <i class="fas fa-check me-2"></i>{{ _('بله') }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal نتیجه -->
+<div class="modal fade" id="resultModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 modern-modal">
+            <div class="modal-header gradient-purple text-white rounded-top-4">
+                <h5 class="modal-title">
+                    <i class="fas fa-check-circle me-2"></i>{{ _('نتیجه درخواست') }}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <div id="resultMessage"></div>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" class="btn btn-primary rounded-3 px-4 modern-btn" data-bs-dismiss="modal">
+                    <i class="fas fa-check me-2"></i>{{ _('متوجه شدم') }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+    <a href="{{ url_for('create_post') }}" class="btn btn-primary btn-lg rounded-3 me-md-3 px-5 modern-btn">
+        <i class="fas fa-plus-circle me-2"></i> {{ _('افزودن پست جدید') }}
+    </a>
+    <a href="{{ url_for('my_posts') }}" class="btn btn-primary btn-lg rounded-3 px-5 modern-btn">
+        <i class="fas fa-list me-2"></i> {{ _('دیدن پست‌های قبلی') }}
+    </a>
+</div>
+
+<!-- بهینه‌سازی: بارگذاری غیرهمزمان Chart.js -->
+<script>
+// بارگذاری غیرهمزمان Chart.js
+function loadChartJS() {
+    return new Promise((resolve, reject) => {
+        if (window.Chart) {
+            resolve();
+            return;
+        }
+        
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+        script.async = true;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+}
+
+// بارگذاری اولیه ضروری
+document.addEventListener('DOMContentLoaded', function() {
+    // بارگذاری غیرهمزمان Chart.js
+    loadChartJS().then(initializeCharts).catch(console.error);
+    
+    // سایر کدهای اولیه
+    initializeIcons();
+    initializeModals();
+});
+
+// مقداردهی اولیه آیکون‌ها
+function initializeIcons() {
+    const iconCircles = document.querySelectorAll('.icon-circle');
+    iconCircles.forEach(icon => {
+        icon.style.cssText = 'width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;';
+    });
+}
+
+// مقداردهی اولیه مودال‌ها
+function initializeModals() {
+    {% if session.get('charge_redirect') %}
+    const chargeModal = new bootstrap.Modal(document.getElementById('chargeModal'));
+    chargeModal.show();
+    {% endif %}
+
+    document.getElementById('confirmCharge')?.addEventListener('click', handleChargeRequest);
+}
+
+// مدیریت درخواست شارژ
+function handleChargeRequest() {
+    const confirmBtn = document.getElementById('confirmCharge');
+    const originalText = confirmBtn.innerHTML;
+    
+    // نمایش وضعیت لودینگ
+    confirmBtn.innerHTML = '<div class="loader"></div>';
+    confirmBtn.disabled = true;
+
+    fetch('{{ url_for("request_plan_recharge") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token() }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const chargeModal = bootstrap.Modal.getInstance(document.getElementById('chargeModal'));
+        chargeModal.hide();
+        
+        showResultModal(data.success, data.message);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showResultModal(false, '{{ _("خطا در ارسال درخواست") }}');
+    })
+    .finally(() => {
+        confirmBtn.innerHTML = originalText;
+        confirmBtn.disabled = false;
+    });
+}
+
+// نمایش مودال نتیجه
+function showResultModal(success, message) {
+    const resultModal = new bootstrap.Modal(document.getElementById('resultModal'));
+    document.getElementById('resultMessage').innerHTML = `
+        <div class="mb-3">
+            <i class="fas ${success ? 'fa-check-circle text-success' : 'fa-times-circle text-danger'} fa-3x"></i>
+        </div>
+        <h5 class="${success ? 'text-success' : 'text-danger'}">${message}</h5>
+    `;
+    resultModal.show();
+}
+
+// مقداردهی اولیه نمودارها
+function initializeCharts() {
+    initializeActivityChart();
+    initializeSalesChart();
+    initializePostStatsChart();
+}
+
+// نمودار فعالیت
+function initializeActivityChart() {
+    const ctx = document.getElementById('activityChart');
+    if (!ctx) return;
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ activity_chart.labels | tojson }},
+            datasets: [{
+                label: '{{ _('تعداد پست‌ها') }}',
+                data: {{ activity_chart.data | tojson }},
+                backgroundColor: 'rgba(127, 58, 161, 0.2)',
+                borderColor: 'rgba(127, 58, 161, 1)',
+                borderWidth: 3,
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: getChartOptions()
+    });
+}
+
+// نمودار فروش
+function initializeSalesChart() {
+    const ctx = document.getElementById('userSalesChart');
+    if (!ctx) return;
+
+    // بارگذاری داده‌ها با تاخیر برای اولویت‌بندی
+    setTimeout(() => {
+        fetch('/get_financial_data?range=weekly', {
+            priority: 'low'
+        })
+        .then(response => response.json())
+        .then(data => {
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: '{{ _('فروش هفتگی (تومان)') }}',
+                        data: data.data,
+                        backgroundColor: 'rgba(84, 22, 181, 0.8)',
+                        borderColor: 'rgba(84, 22, 181, 1)',
+                        borderWidth: 2,
+                        borderRadius: 6
+                    }]
+                },
+                options: getChartOptions(true)
+            });
+        })
+        .catch(console.error);
+    }, 100);
+}
+
+// نمودار آمار پست‌ها
+function initializePostStatsChart() {
+    const ctx = document.getElementById('postStatsChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: {{ chart_data.labels | tojson }},
+            datasets: [
+                {
+                    label: '{{ _('تعداد بازدید') }}',
+                    data: {{ chart_data.views | tojson }},
+                    backgroundColor: 'rgba(84, 22, 181, 0.8)',
+                    borderColor: 'rgba(84, 22, 181, 1)',
+                    borderWidth: 2,
+                    borderRadius: 4
+                },
+                {
+                    label: '{{ _('تعداد کلیک') }}',
+                    data: {{ chart_data.clicks | tojson }},
+                    backgroundColor: 'rgba(127, 58, 161, 0.8)',
+                    borderColor: 'rgba(127, 58, 161, 1)',
+                    borderWidth: 2,
+                    borderRadius: 4
+                }
+            ]
+        },
+        options: getChartOptions(false, true)
+    });
+}
+
+// تنظیمات مشترک نمودارها
+function getChartOptions(isSales = false, isPostStats = false) {
+    const baseOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: { color: 'rgba(255,255,255,0.1)' },
+                ticks: { 
+                    color: '#6c757d',
+                    ...(isSales && {
+                        callback: function(value) {
+                            return value.toLocaleString() + ' {{ _('تومان') }}';
+                        }
+                    })
+                }
+            },
+            x: {
+                grid: { color: 'rgba(255,255,255,0.1)' },
+                ticks: { color: '#6c757d' }
+            }
+        },
+        plugins: {
+            legend: {
+                labels: { color: '#6c757d' }
+            }
+        }
+    };
+    
+    return baseOptions;
+}
+
+// فیلتر آمار با AJAX
+function filterStats(value) {
+    const filterSelect = document.getElementById('statsFilter');
+    const originalValue = filterSelect.value;
+    
+    // غیرفعال کردن سلکت durante درخواست
+    filterSelect.disabled = true;
+    
+    fetch('{{ url_for("dashboard") }}?sort=' + value + '&ajax=1')
+        .then(response => response.json())
+        .then(data => {
+            updateTable(data.posts_with_stats);
+            updateChart(data.chart_data);
+            updateTotals(data.total_views, data.total_clicks);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            filterSelect.value = originalValue;
+        })
+        .finally(() => {
+            filterSelect.disabled = false;
+        });
+}
+
+// به‌روزرسانی جدول
+function updateTable(posts) {
+    const tbody = document.querySelector('.modern-table tbody');
+    if (!tbody) return;
+    
+    let html = '';
+    
+    if (posts.length === 0) {
+        html = '<tr><td colspan="5" class="text-center">{{ _("هیچ پستی یافت نشد") }}</td></tr>';
+    } else {
+        posts.forEach(item => {
+            html += `
+                <tr>
+                    <td>${escapeHtml(item.post.title)}</td>
+                    <td>${item.views}</td>
+                    <td>${item.clicks}</td>
+                    <td>${escapeHtml(item.post.jalali_date)}</td>
+                </tr>
+            `;
+        });
+    }
+    
+    tbody.innerHTML = html;
+}
+
+// به‌روزرسانی نمودار
+function updateChart(chartData) {
+    const chartCanvas = document.getElementById('postStatsChart');
+    const existingChart = Chart.getChart(chartCanvas);
+    
+    if (existingChart) {
+        existingChart.data.labels = chartData.labels;
+        existingChart.data.datasets[0].data = chartData.views;
+        existingChart.data.datasets[1].data = chartData.clicks;
+        existingChart.update('none'); // آپدیت بدون انیمیشن برای سرعت بیشتر
+    }
+}
+
+// به‌روزرسانی آمار کلی
+function updateTotals(totalViews, totalClicks) {
+    const header = document.querySelector('.card-header');
+    if (header) {
+        const spans = header.querySelectorAll('span');
+        if (spans[0]) spans[0].innerHTML = '{{ _("بازدید کل") }}: <strong>' + totalViews + '</strong>';
+        if (spans[1]) spans[1].innerHTML = '{{ _("کلیک کل") }}: <strong>' + totalClicks + '</strong>';
+    }
+}
+
+// تابع امن برای نمایش HTML
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+</script>
+
+<style>
+    @font-face {
+    font-family: 'SF Arabic Rounded';
+    src: url("/static/fonts/SFArabic-Regular.woff") format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --primary-dark: #0F083B;
+    --primary: #5416B5;
+    --primary-light: #7F3AA1;
+    --dark: #0C0516;
+    --gai-font-family: 'SF Arabic Rounded', 'Vazirmatn', 'Segoe UI', sans-serif;
+}
+
+/* اعمال فونت در کل صفحه */
+body {
+    font-family: var(--gai-font-family) !important;
+}
+/* گرادیانت‌های بهینه‌شده */
+.gradient-purple {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    will-change: transform;
+}
+
+.gradient-blue {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+    will-change: transform;
+}
+
+.gradient-purple-light {
+    background: linear-gradient(135deg, var(--primary-light) 0%, #9B59B6 100%);
+    will-change: transform;
+}
+
+.gradient-dark {
+    background: linear-gradient(135deg, var(--dark) 0%, var(--primary-dark) 100%);
+    will-change: transform;
+}
+
+/* بهینه‌سازی کارت‌ها */
+.modern-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    will-change: transform;
+    contain: layout style;
+}
+
+.modern-card:hover {
+    transform: translateY(-5px) scale(1.01);
+    box-shadow: 0 10px 25px rgba(84, 22, 181, 0.25) !important;
+}
+
+/* بهینه‌سازی دکمه‌ها */
+.modern-btn {
+    transition: all 0.2s ease;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    border: none;
+    position: relative;
+    overflow: hidden;
+    will-change: transform;
+}
+
+.modern-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(84, 22, 181, 0.3);
+}
+
+/* بهینه‌سازی جداول */
+.modern-table {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.modern-table thead th {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    border: none;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+}
+
+.modern-table tbody tr {
+    transition: all 0.15s ease;
+    will-change: transform;
+}
+
+.modern-table tbody tr:hover {
+    background-color: rgba(84, 22, 181, 0.08);
+    transform: scale(1.005);
+}
+
+/* بهینه‌سازی لیست‌ها */
+.modern-list-item {
+    transition: all 0.15s ease;
+    border-radius: 8px;
+    margin-bottom: 5px;
+    will-change: transform;
+}
+
+.modern-list-item:hover {
+    background-color: rgba(84, 22, 181, 0.1);
+    transform: translateX(3px);
+}
+
+/* استایل‌های اصلی بهینه‌شده */
+body {
+    background: linear-gradient(135deg, var(--dark) 0%, var(--primary-dark) 100%);
+    color: #f8f9fa;
+    min-height: 100vh;
+}
+
+/* بهبود performance برای انیمیشن‌ها */
+.modern-card {
+    animation: fadeInUp 0.4s ease forwards;
+    animation-delay: calc(var(--card-index, 0) * 0.05s);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* تنظیم card-index برای انیمیشن‌های متوالی */
+.modern-card:nth-child(1) { --card-index: 1; }
+.modern-card:nth-child(2) { --card-index: 2; }
+.modern-card:nth-child(3) { --card-index: 3; }
+.modern-card:nth-child(4) { --card-index: 4; }
+
+/* بهینه‌سازی اسکرول بار */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    border-radius: 8px;
+}
+
+/* استایل‌های خاص برای محتوای مشکی */
+.modern-card .card-body .alert.alert-success,
+.modern-card .card-body .alert.alert-danger,
+.modern-card .card-body .alert.alert-warning {
+    color: #000000 !important;
+}
+
+.modern-card .card-body p {
+    color: #ffffff !important;
+}
+
+.modern-card .card-body p strong {
+    color: #ffffff !important;
+}
+
+.modern-list-item small.text-muted {
+    color: #000000 !important;
+}
+
+.modern-list-item:hover small.text-muted {
+    color: #ffffff !important;
+}
+
+.modern-list-item:hover {
+    background-color: rgba(84, 22, 181, 0.8) !important;
+    color: #ffffff !important;
+}
+
+.modern-list-item:hover span {
+    color: #ffffff !important;
+}
+
+/* بهبود نوار پیشرفت */
+.modern-progress .progress-bar {
+    color: #ffffffff !important;
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+    font-size: 0.9rem !important;
+}
+
+.modern-progress .progress-bar.bg-success {
+    background: linear-gradient(135deg, #7F3AA1 0%, #5416B5 100%) !important;
+}
+
+.modern-progress .progress-bar.bg-warning {
+    background: linear-gradient(135deg, #FF6B6B 0%, #7F3AA1 100%) !important;
+}
+
+/* بهبود سلکت‌باکس */
+.modern-select {
+    border: 1px solid rgba(84, 22, 181, 0.2);
+    border-radius: 8px;
+    padding: 10px 15px;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.05);
+    color: #f8f9fa !important;
+}
+
+.modern-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(84, 22, 181, 0.2);
+    color: #131010ff !important;
+}
+
+/* لودر */
+.loader {
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #5416B5;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto;
+    display: inline-block;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* بهینه‌سازی برای دستگاه‌های لمسی */
+@media (hover: none) {
+    .modern-card:hover {
+        transform: none;
+    }
+    
+    .modern-btn:hover {
+        transform: none;
+    }
+    
+    .modern-table tbody tr:hover {
+        transform: none;
+    }
+}
+
+/* کاهش motion برای کاربران حساس */
+@media (prefers-reduced-motion: reduce) {
+    .modern-card,
+    .modern-btn,
+    .modern-table tbody tr,
+    .modern-list-item {
+        transition: none;
+        animation: none;
+    }
+    
+    .modern-card:hover {
+        transform: none;
+    }
+}
+/* اعمال فونت در کل محتوای dashboard */
+.modern-card,
+.modern-card *:not(i):not(.fa):not(.fas):not(.far):not(.fal):not(.fab) {
+    font-family: var(--gai-font-family) !important;
+}
+
+/* اعمال فونت برای عناصر خاص */
+.modern-table,
+.modern-table th,
+.modern-table td,
+.modern-select,
+.modern-btn,
+.modern-alert,
+.modern-list-item,
+.modern-modal,
+.modern-modal * {
+    font-family: var(--gai-font-family) !important;
+}
+
+/* اعمال فونت برای تیترها */
+h1, h2, h3, h4, h5, h6,
+.card-title,
+.modal-title {
+    font-family: var(--gai-font-family) !important;
+    font-weight: 600;
+}
+
+/* اعمال فونت برای متن‌های کوچک */
+small, .text-muted {
+    font-family: var(--gai-font-family) !important;
+}
+
+/* اعمال فونت برای دکمه‌ها */
+.btn {
+    font-family: var(--gai-font-family) !important;
+}
+
+/* اعمال فونت برای جدول */
+.table {
+    font-family: var(--gai-font-family) !important;
+}
+
+/* اعمال فونت برای سلکت‌باکس */
+.form-select, .form-control {
+    font-family: var(--gai-font-family) !important;
+}
+
+/* اعمال فونت برای آلرت‌ها */
+.alert {
+    font-family: var(--gai-font-family) !important;
+}
+</style>
+{% endblock %}
