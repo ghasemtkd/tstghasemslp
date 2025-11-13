@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="{{ get_locale() }}" dir="{{ 'rtl' if get_locale() == 'fa' else 'ltr' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فروشگاه GAI - {% block title %}{% endblock %}</title>
+    <!-- متا تگ‌های PWA -->
+    <meta name="theme-color" content="#5416B5">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="GAI Shop">
+    <meta name="msapplication-TileColor" content="#5416B5">
+    <meta name="msapplication-TileImage" content="/static/icons/icon-144x144.png">
+    
+    <!-- لینک به manifest -->
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-152x152.png') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='icon/icon-128x128.png') }}">
+    
+    <!-- بارگذاری بهینه CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+
+    <!-- استایل‌های بحرانی -->
+    <style>
+        :root {
+            --gai-primary-color: #5416B5;
+            --gai-primary-dark: #0F083B;
+            --gai-secondary-color: #7F3AA1;
+            --gai-dark-bg: #0C0516;
+            --gai-text-light: #FFFFFF;
+            --gai-text-muted: #A0A0C0;
+            --gai-card-bg: rgba(15, 8, 59, 0.7);
+            --gai-card-border: rgba(127, 58, 161, 0.3);
+            --gai-success-color: #00D4AA;
+            --gai-warning-color: #FFB74D;
+            --gai-danger-color: #FF6B6B;
+            --gai-font-family: 'SF Arabic', system-ui, -apple-system, 'Segoe UI', sans-serif;
+        }
+        
+        /* فونت جدید */
+        @font-face {
+            font-family: 'SF Arabic';
+            src: url("{{ url_for('static', filename='fonts/SFArabic-Regular.woff') }}") format('woff');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        
+        .gai-main-body {
+            background: linear-gradient(135deg, var(--gai-dark-bg) 0%, var(--gai-primary-dark) 100%);
+            color: var(--gai-text-light);
+            min-height: 100vh;
+            font-family: var(--gai-font-family); 
+            padding-bottom: 180px;
+        }
+
+        .gai-bottom-navbar {
+            background: rgba(15, 8, 59, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 3px solid var(--gai-primary-color);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 10px 0;
+            min-height: 80px;
+            will-change: transform;
+        }
+
+        .gai-main-content {
+            padding-top: 20px;
+            min-height: calc(100vh - 140px);
+            margin-bottom: 200px;
+        }
+
+        /* استایل‌های عمومی */
+        .gai-alert-success {
+            background: rgba(0, 212, 170, 0.2);
+            border: 1px solid var(--gai-success-color);
+            color: var(--gai-text-light);
+        }
+
+        .gai-alert-danger {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid var(--gai-danger-color);
+            color: var(--gai-text-light);
+        }
+
+        /* استایل‌های پایه برای تمام لینک‌ها */
+        .gai-nav-link {
+            color: var(--gai-text-light) !important;
+            text-decoration: none !important;
+            display: flex !important;
+            align-items: center !important;
+            transition: all 0.15s ease !important;
+        }
+
+        .gai-nav-link i {
+            display: inline-block !important;
+            text-align: center;
+        }
+
+        .gai-notification-badge {
+            font-size: 0.65rem;
+            padding: 3px 5px;
+        }
+    </style>
+
+    <!-- استایل‌های غیر بحرانی با تاخیر -->
+    <style id="deferred-styles">
+        /* ===== موبایل - عمودی ===== */
+        @media (max-width: 767.98px) {
+            .gai-mobile-nav {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 15px;
+                width: 100%;
+            }
+
+            .gai-menu-toggle {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                width: 30px;
+                height: 24px;
+                background: transparent;
+                border: none;
+                cursor: pointer;
+                padding: 0;
+            }
+
+            .gai-menu-toggle span {
+                width: 100%;
+                height: 3px;
+                background: var(--gai-text-light);
+                border-radius: 2px;
+                transition: all 0.2s ease;
+            }
+
+            .gai-mobile-logo {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, var(--gai-primary-color) 0%, var(--gai-secondary-color) 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.9rem;
+                font-weight: bold;
+                color: white;
+                text-decoration: none;
+                box-shadow: 0 0 15px rgba(84, 22, 181, 0.7);
+            }
+
+            .gai-nav-collapse {
+                position: fixed;
+                bottom: 80px;
+                left: 0;
+                right: 0;
+                background: rgba(15, 8, 59, 0.98);
+                backdrop-filter: blur(30px);
+                border-top: 2px solid var(--gai-primary-color);
+                z-index: 999;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.2s ease;
+                padding: 0 15px;
+            }
+
+            .gai-nav-collapse.gai-show {
+                max-height: 70vh;
+                overflow-y: auto;
+                padding: 15px;
+            }
+
+            .gai-mobile-nav-items {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .gai-mobile-nav-items .gai-nav-link {
+                padding: 12px !important;
+                border-radius: 8px;
+                background: rgba(84, 22, 181, 0.3);
+                border: 1px solid rgba(127, 58, 161, 0.4);
+                display: flex !important;
+                align-items: center !important;
+                flex-direction: row !important;
+            }
+
+            .gai-mobile-nav-items .gai-nav-link i {
+                margin-left: 8px;
+                font-size: 1.1rem;
+                width: 20px;
+                display: inline-block !important;
+            }
+
+            .gai-mobile-nav-items .gai-notification-badge {
+                margin-right: auto;
+                margin-left: 8px;
+            }
+        }
+
+        /* ===== موبایل - افقی ===== */
+        @media (max-width: 767.98px) and (orientation: landscape) {
+            .gai-bottom-navbar {
+                min-height: 70px;
+                padding: 8px 0;
+            }
+            
+            .gai-nav-collapse {
+                bottom: 70px;
+                max-height: 60vh;
+            }
+            
+            .gai-mobile-nav-items {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+            }
+            
+            .gai-mobile-nav-items .gai-nav-link {
+                padding: 8px 10px !important;
+                font-size: 0.85rem;
+            }
+            
+            .gai-mobile-nav-items .gai-nav-link i {
+                font-size: 1rem;
+                margin-left: 6px;
+            }
+            
+            .gai-mobile-logo {
+                width: 45px;
+                height: 45px;
+                font-size: 0.8rem;
+            }
+            
+            .gai-main-content {
+                margin-bottom: 150px;
+            }
+        }
+
+        /* ===== تبلت کوچک و موبایل بزرگ در حالت افقی ===== */
+        @media (min-width: 576px) and (max-width: 767.98px) and (orientation: landscape) {
+            .gai-mobile-nav-items {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .gai-mobile-nav-items .gai-nav-link {
+                padding: 10px 12px !important;
+                font-size: 0.9rem;
+            }
+            
+            .gai-mobile-nav-items .gai-nav-link i {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* ===== تبلت (768px به بالا) ===== */
+        @media (min-width: 768px) {
+            /* مخفی کردن منوی موبایل در تبلت و دسکتاپ */
+            .gai-mobile-nav,
+            .gai-nav-collapse {
+                display: none !important;
+            }
+
+            /* نمایش منوی دسکتاپ */
+            .gai-desktop-nav {
+                display: flex !important;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                gap: 8px;
+                padding: 0 10px;
+            }
+
+            .gai-bottom-navbar {
+                min-height: 100px;
+                padding: 12px 0;
+            }
+
+            .gai-desktop-nav .gai-nav-link {
+                flex: 1;
+                min-width: 70px;
+                max-width: 90px;
+                height: 75px;
+                padding: 8px 4px !important;
+                border-radius: 10px;
+                background: rgba(84, 22, 181, 0.3);
+                border: 1px solid rgba(127, 58, 161, 0.4);
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
+                text-align: center;
+                font-size: 0.7rem;
+                transition: all 0.2s ease;
+                position: relative;
+                will-change: transform;
+            }
+
+            .gai-desktop-nav .gai-nav-link:hover {
+                background: linear-gradient(135deg, var(--gai-primary-color) 0%, var(--gai-secondary-color) 100%);
+                transform: translateY(-2px);
+            }
+
+            .gai-desktop-nav .gai-nav-link i {
+                font-size: 1.3rem;
+                margin-bottom: 4px;
+                margin-left: 0 !important;
+                display: block !important;
+            }
+
+            .gai-center-logo {
+                width: 75px;
+                height: 75px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, var(--gai-primary-color) 0%, var(--gai-secondary-color) 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1rem;
+                font-weight: bold;
+                color: white;
+                text-decoration: none;
+                margin: 0 12px;
+                box-shadow: 0 0 15px rgba(84, 22, 181, 0.7);
+                transition: all 0.2s ease;
+                flex-shrink: 0;
+                will-change: transform;
+            }
+
+            .gai-center-logo:hover {
+                transform: scale(1.05);
+            }
+
+            .gai-desktop-nav .gai-notification-badge {
+                position: absolute;
+                top: -4px;
+                left: -4px;
+                font-size: 0.55rem;
+                padding: 2px 4px;
+            }
+        }
+
+        /* ===== تبلت - حالت افقی ===== */
+        @media (min-width: 768px) and (max-width: 991.98px) and (orientation: landscape) {
+            .gai-bottom-navbar {
+                min-height: 90px;
+            }
+            
+            .gai-desktop-nav .gai-nav-link {
+                min-width: 65px;
+                max-width: 80px;
+                height: 70px;
+                font-size: 0.65rem;
+            }
+            
+            .gai-desktop-nav .gai-nav-link i {
+                font-size: 1.2rem;
+            }
+            
+            .gai-center-logo {
+                width: 70px;
+                height: 70px;
+                font-size: 0.9rem;
+                margin: 0 10px;
+            }
+        }
+
+        /* ===== دسکتاپ کوچک ===== */
+        @media (min-width: 992px) {
+            .gai-desktop-nav {
+                gap: 10px;
+                padding: 0 15px;
+            }
+
+            .gai-desktop-nav .gai-nav-link {
+                max-width: 100px;
+                height: 80px;
+                padding: 10px 5px !important;
+                font-size: 0.75rem;
+            }
+
+            .gai-desktop-nav .gai-nav-link i {
+                font-size: 1.4rem;
+            }
+
+            .gai-center-logo {
+                width: 85px;
+                height: 85px;
+                font-size: 1.1rem;
+                margin: 0 15px;
+            }
+        }
+
+        /* ===== دسکتاپ بزرگ ===== */
+        @media (min-width: 1200px) {
+            .gai-desktop-nav {
+                gap: 12px;
+                padding: 0 20px;
+            }
+
+            .gai-desktop-nav .gai-nav-link {
+                max-width: 110px;
+                height: 85px;
+                padding: 12px 6px !important;
+                font-size: 0.8rem;
+            }
+
+            .gai-desktop-nav .gai-nav-link i {
+                font-size: 1.5rem;
+            }
+
+            .gai-center-logo {
+                width: 95px;
+                height: 95px;
+                font-size: 1.2rem;
+                margin: 0 20px;
+            }
+        }
+
+        /* ===== بهینه‌سازی برای دستگاه‌های لمسی ===== */
+        @media (hover: none) {
+            .gai-desktop-nav .gai-nav-link:hover {
+                transform: none;
+            }
+            
+            .gai-center-logo:hover {
+                transform: none;
+            }
+        }
+
+        /* ===== کاهش motion ===== */
+        @media (prefers-reduced-motion: reduce) {
+            .gai-nav-link,
+            .gai-center-logo,
+            .gai-menu-toggle span {
+                transition: none;
+            }
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="gai-main-body">
+    <!-- محتوای اصلی -->
+    <div class="container gai-main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert gai-alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <h1 class="mb-4">{% block page_header %}{% endblock %}</h1>
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- نوار پایین -->
+    <nav class="navbar gai-bottom-navbar">
+        <div class="container-fluid p-0">
+            <!-- موبایل -->
+            <div class="d-flex d-lg-none gai-mobile-nav">
+                <button class="gai-menu-toggle" type="button" aria-label="منو">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                
+                <a class="gai-mobile-logo" href="{{ url_for('dashboard') }}" aria-label="داشبورد">GAI</a>
+            </div>
+
+            <!-- منوی جمع‌شونده موبایل -->
+            <div class="gai-nav-collapse d-lg-none">
+                <div class="gai-mobile-nav-items">
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.username == 'admin' %}
+                            <!-- منوی ادمین موبایل -->
+                            <a class="gai-nav-link" href="{{ url_for('admin_financial_management') }}">
+                                <i class="fas fa-chart-line" aria-hidden="true"></i>
+                                {{ _('مالی') }}
+                            </a>
+                            <a class="gai-nav-link" href="{{ url_for('admin_channel_requests') }}">
+                                <i class="fas fa-bell" aria-hidden="true"></i>
+                                {{ _('درخواست‌ها') }}
+                                {% if pending_requests_count > 0 %}
+                                    <span class="gai-notification-badge bg-danger rounded-pill">{{ pending_requests_count }}</span>
+                                {% endif %}
+                            </a>
+                            <a class="gai-nav-link" href="{{ url_for('admin_users') }}">
+                                <i class="fas fa-users-cog" aria-hidden="true"></i>
+                                {{ _('کاربران') }}
+                            </a>
+                            <a class="gai-nav-link" href="{{ url_for('admin_notifications') }}">
+                                <i class="fas fa-comment-alt" aria-hidden="true"></i>
+                                {{ _('اعلان‌ها') }}
+                            </a>
+                            <a class="gai-nav-link" href="{{ url_for('admin_all_messages') }}">
+                                <i class="fas fa-envelope" aria-hidden="true"></i>
+                                {{ _('پیام‌ها') }}
+                            </a>
+                            <a class="gai-nav-link" href="{{ url_for('admin_archived_users') }}">
+                                <i class="fas fa-archive" aria-hidden="true"></i>
+                                {{ _('آرشیو') }}
+                            </a>
+                            <a class="gai-nav-link" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                                {{ _('خروج') }}
+                            </a>
+                        {% else %}
+                            <!-- منوی کاربر عادی موبایل -->
+                            <a class="gai-nav-link" href="{{ url_for('create_post') }}">
+                                <i class="fas fa-plus-circle" aria-hidden="true"></i>
+                                {{ _('پست جدید') }}
+                            </a>
+                            <a class="gai-nav-link" href="{{ url_for('my_posts') }}">
+                                <i class="fas fa-list" aria-hidden="true"></i>
+                                {{ _('پست‌های من') }}
+                            </a>
+                            <a class="gai-nav-link" href="{{ url_for('financial_management') }}">
+                                <i class="fas fa-chart-pie" aria-hidden="true"></i>
+                                {{ _('مالی') }}
+                            </a>
+                            <a class="gai-nav-link" href="{{ url_for('user_notifications') }}">
+                                <i class="fas fa-bell" aria-hidden="true"></i>
+                                {{ _('اعلان‌ها') }}
+                                {% if unread_notifications > 0 %}
+                                    <span class="gai-notification-badge bg-danger rounded-pill">{{ unread_notifications }}</span>
+                                {% endif %}
+                            </a>
+                            <a class="gai-nav-link" href="{{ url_for('contact_admin') }}">
+                                <i class="fas fa-headset" aria-hidden="true"></i>
+                                {{ _('پشتیبانی') }}
+                            </a>
+                            <a class="gai-nav-link" href="{{ url_for('settings') }}">
+                                <i class="fas fa-cog" aria-hidden="true"></i>
+                                {{ _('تنظیمات') }}
+                            </a>
+                            <a class="gai-nav-link language-switcher" 
+                            href="{{ url_for('change_language', lang='fa' if get_locale() != 'fa' else 'en') }}?_cache={{ random_str }}"
+                            data-lang="{{ 'fa' if get_locale() != 'fa' else 'en' }}">
+                                <i class="fas fa-language" aria-hidden="true"></i>
+                                {{ _('فارسی') if get_locale() != 'fa' else _('English') }}
+                            </a>
+                            <a class="gai-nav-link" href="{{ url_for('logout') }}">
+                                <i class="fas fa-power-off" aria-hidden="true"></i>
+                                {{ _('خروج') }}
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <!-- منوی کاربر لاگین نکرده موبایل -->
+                        <a class="gai-nav-link" href="{{ url_for('login') }}">
+                            <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
+                            {{ _('ورود') }}
+                        </a>
+                        <a class="gai-nav-link" href="{{ url_for('register') }}">
+                            <i class="fas fa-user-plus" aria-hidden="true"></i>
+                            {{ _('ثبت‌نام') }}
+                        </a>
+                        <a class="gai-nav-link" href="{{ url_for('about') }}">
+                            <i class="fas fa-info-circle" aria-hidden="true"></i>
+                            {{ _('درباره') }}
+                        </a>
+                        <a class="gai-nav-link" href="{{ url_for('change_language', lang='fa' if get_locale() != 'fa' else 'en') }}">
+                            <i class="fas fa-language" aria-hidden="true"></i>
+                            {{ _('فارسی') if get_locale() != 'fa' else _('English') }}
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- دسکتاپ و تبلت -->
+            <div class="gai-desktop-nav d-none">
+                {% if current_user.is_authenticated %}
+                    {% if current_user.username == 'admin' %}
+                        <!-- منوی ادمین دسکتاپ -->
+                        <a class="gai-nav-link" href="{{ url_for('admin_users') }}">
+                            <i class="fas fa-users-cog" aria-hidden="true"></i>
+                            {{ _('کاربران') }}
+                        </a>
+                        <a class="gai-nav-link" href="{{ url_for('admin_channel_requests') }}">
+                            <i class="fas fa-bell" aria-hidden="true"></i>
+                            {{ _('درخواست‌ها') }}
+                            {% if pending_requests_count > 0 %}
+                                <span class="gai-notification-badge bg-danger rounded-pill">{{ pending_requests_count }}</span>
+                            {% endif %}
+                        </a>
+                        <a class="gai-nav-link" href="{{ url_for('admin_all_messages') }}">
+                            <i class="fas fa-envelope" aria-hidden="true"></i>
+                            {{ _('پیام‌ها') }}
+                        </a>
+                        <a class="gai-nav-link" href="{{ url_for('admin_notifications') }}">
+                            <i class="fas fa-comment-alt" aria-hidden="true"></i>
+                            {{ _('اعلان‌ها') }}
+                        </a>
+
+                        <a class="gai-center-logo" href="{{ url_for('dashboard') }}" aria-label="داشبورد">GAI</a>
+                        <a class="gai-nav-link" href="{{ url_for('admin_financial_management') }}">
+                            <i class="fas fa-chart-line" aria-hidden="true"></i>
+                            {{ _('مالی') }}
+                        </a>
+                        <a class="gai-nav-link" href="{{ url_for('admin_archived_users') }}">
+                            <i class="fas fa-archive" aria-hidden="true"></i>
+                            {{ _('آرشیو') }}
+                        </a>
+                        <a class="gai-nav-link" href="{{ url_for('logout') }}">
+                            <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                            {{ _('خروج') }}
+                        </a>
+
+                    {% else %}
+                        <!-- منوی کاربر عادی دسکتاپ -->
+                        <a class="gai-nav-link" href="{{ url_for('create_post') }}">
+                            <i class="fas fa-plus-circle" aria-hidden="true"></i>
+                            {{ _('پست جدید') }}
+                        </a>
+                        <a class="gai-nav-link" href="{{ url_for('my_posts') }}">
+                            <i class="fas fa-list" aria-hidden="true"></i>
+                            {{ _('پست‌های من') }}
+                        </a>
+                        <a class="gai-nav-link" href="{{ url_for('financial_management') }}">
+                            <i class="fas fa-chart-pie" aria-hidden="true"></i>
+                            {{ _('مالی') }}
+                        </a>
+                        <a class="gai-nav-link" href="{{ url_for('user_notifications') }}">
+                            <i class="fas fa-bell" aria-hidden="true"></i>
+                            {{ _('اعلان‌ها') }}
+                            {% if unread_notifications > 0 %}
+                                <span class="gai-notification-badge bg-danger rounded-pill">{{ unread_notifications }}</span>
+                            {% endif %}
+                        </a>
+                        <a class="gai-center-logo" href="{{ url_for('dashboard') }}" aria-label="داشبورد">GAI</a>
+
+                        <a class="gai-nav-link" href="{{ url_for('contact_admin') }}">
+                            <i class="fas fa-headset" aria-hidden="true"></i>
+                            {{ _('پشتیبانی') }}
+                        </a>
+                        <a class="gai-nav-link" href="{{ url_for('settings') }}">
+                            <i class="fas fa-cog" aria-hidden="true"></i>
+                            {{ _('تنظیمات') }}
+                        </a>
+                        <a class="gai-nav-link" href="{{ url_for('change_language', lang='fa' if get_locale() != 'fa' else 'en') }}">
+                            <i class="fas fa-language" aria-hidden="true"></i>
+                            {{ _('فارسی') if get_locale() != 'fa' else _('English') }}
+                        </a>
+                        <a class="gai-nav-link" href="{{ url_for('logout') }}">
+                            <i class="fas fa-power-off" aria-hidden="true"></i>
+                            {{ _('خروج') }}
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <!-- منوی کاربر لاگین نکرده دسکتاپ -->
+                    <a class="gai-nav-link" href="{{ url_for('login') }}">
+                        <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
+                        {{ _('ورود') }}
+                    </a>
+                    <a class="gai-nav-link" href="{{ url_for('register') }}">
+                        <i class="fas fa-user-plus" aria-hidden="true"></i>
+                        {{ _('ثبت‌نام') }}
+                    </a>
+
+                    <a class="gai-center-logo" href="{{ url_for('dashboard') }}" aria-label="صفحه اصلی">GAI</a>
+
+                    <a class="gai-nav-link" href="{{ url_for('about') }}">
+                        <i class="fas fa-info-circle" aria-hidden="true"></i>
+                        {{ _('درباره') }}
+                    </a>
+                    <a class="gai-nav-link" href="{{ url_for('change_language', lang='fa' if get_locale() != 'fa' else 'en') }}">
+                        <i class="fas fa-language" aria-hidden="true"></i>
+                        {{ _('فارسی') if get_locale() != 'fa' else _('English') }}
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- اسکریپت‌های باقی مانده بدون تغییر -->
+    <script>
+        // بارگذاری غیرهمزمان Bootstrap
+        function loadBootstrap() {
+            return new Promise((resolve, reject) => {
+                if (window.bootstrap) {
+                    resolve();
+                    return;
+                }
+                
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js';
+                script.crossOrigin = 'anonymous';
+                script.onload = resolve;
+                script.onerror = reject;
+                document.body.appendChild(script);
+            });
+        }
+
+        // بارگذاری استایل‌های غیر بحرانی
+        function loadDeferredStyles() {
+            const deferredStyles = document.getElementById('deferred-styles');
+            if (deferredStyles) {
+                deferredStyles.rel = 'stylesheet';
+            }
+        }
+
+        // مدیریت منوی موبایل
+        function initMobileMenu() {
+            const toggleButton = document.querySelector('.gai-menu-toggle');
+            const navCollapse = document.querySelector('.gai-nav-collapse');
+            
+            if (!toggleButton || !navCollapse) return;
+
+            const toggleMenu = () => {
+                toggleButton.classList.toggle('active');
+                navCollapse.classList.toggle('gai-show');
+            };
+
+            toggleButton.addEventListener('click', toggleMenu);
+            
+            // بستن منو با کلیک روی لینک‌ها
+            document.querySelectorAll('.gai-nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    toggleButton.classList.remove('active');
+                    navCollapse.classList.remove('gai-show');
+                });
+            });
+            
+            // بستن منو با کلیک خارج از آن
+            document.addEventListener('click', (event) => {
+                if (!navCollapse.contains(event.target) && !toggleButton.contains(event.target)) {
+                    toggleButton.classList.remove('active');
+                    navCollapse.classList.remove('gai-show');
+                }
+            });
+        }
+
+        // ثبت Service Worker
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('{{ url_for("static", filename="service-worker.js") }}')
+                    .catch(console.error);
+            }
+        }
+
+        // مدیریت PWA Install Prompt
+        function initPWAInstall() {
+            let deferredPrompt;
+            
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                setTimeout(showInstallPrompt, 3000); // تاخیر برای نمایش
+            });
+
+            function showInstallPrompt() {
+                if (!deferredPrompt || document.getElementById('gaiInstallButton')) return;
+
+                const installBtn = document.createElement('button');
+                installBtn.id = 'gaiInstallButton';
+                installBtn.innerHTML = '📲 نصب اپلیکیشن';
+                installBtn.className = 'btn btn-primary';
+                installBtn.style.cssText = `
+                    position: fixed;
+                    bottom: 180px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    z-index: 10000;
+                    padding: 10px 16px;
+                    border-radius: 20px;
+                    font-size: 14px;
+                    box-shadow: 0 3px 10px rgba(84, 22, 181, 0.4);
+                `;
+                
+                installBtn.addEventListener('click', installApp);
+                document.body.appendChild(installBtn);
+            }
+
+            function installApp() {
+                if (!deferredPrompt) return;
+                
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('نصب پذیرفته شد');
+                    }
+                    deferredPrompt = null;
+                    const btn = document.getElementById('gaiInstallButton');
+                    if (btn) btn.style.display = 'none';
+                });
+            }
+
+            window.addEventListener('appinstalled', () => {
+                const btn = document.getElementById('gaiInstallButton');
+                if (btn) btn.style.display = 'none';
+            });
+        }
+
+        // امنیت - غیرفعال کردن کلیک راست و Developer Tools
+        function initSecurity() {
+            // غیرفعال کردن کلیک راست
+            document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+            // غیرفعال کردن کلیدهای Developer Tools
+            document.addEventListener('keydown', (e) => {
+                const blockedKeys = [
+                    'F12',
+                    'I',
+                    'J',
+                    'U'
+                ];
+                
+                const isBlocked = (e.key === 'F12') ||
+                                (e.ctrlKey && e.shiftKey && blockedKeys.includes(e.key)) ||
+                                (e.ctrlKey && e.key === 'u');
+                
+                if (isBlocked) {
+                    e.preventDefault();
+                }
+            });
+        }
+
+        // مقداردهی اولیه زمانی که DOM آماده است
+        document.addEventListener('DOMContentLoaded', function() {
+            // بارگذاری استایل‌های غیر بحرانی
+            loadDeferredStyles();
+            
+            // بارگذاری غیرهمزمان Bootstrap
+            loadBootstrap().then(() => {
+                initMobileMenu();
+            }).catch(console.error);
+
+            // سایر مقداردهی‌ها
+            registerServiceWorker();
+            initPWAInstall();
+            initSecurity();
+        });
+
+        // بهینه‌سازی برای بارگذاری سریع‌تر
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadDeferredStyles);
+        } else {
+            loadDeferredStyles();
+        }
+    </script>
+
+    <!-- اسکریپت‌های مربوط به تغییر زبان بدون تغییر -->
+    <script>
+    // 🔥 مدیریت تغییر زبان با شکستن کش
+    function initLanguageSwitcher() {
+        const langLinks = document.querySelectorAll('.language-switcher');
+        
+        langLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetLang = this.getAttribute('data-lang');
+                const currentUrl = window.location.href;
+                
+                // ایجاد پارامتر تصادفی
+                const randomParam = 'lang_' + Math.random().toString(36).substring(2, 15);
+                
+                // تغییر زبان از طریق fetch
+                fetch(`/change_language/${targetLang}?_force=${randomParam}`, {
+                    method: 'GET',
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    cache: 'no-store'
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        // رفرش کامل صفحه با پارامتر ضد کش
+                        const refreshParam = 'refresh_' + Date.now();
+                        const separator = response.url.includes('?') ? '&' : '?';
+                        window.location.href = response.url + separator + '_refresh=' + refreshParam;
+                    } else {
+                        // فال بک: رفرش ساده
+                        window.location.reload(true);
+                    }
+                })
+                .catch(error => {
+                    // فال بک نهایی
+                    window.location.href = this.href;
+                });
+            });
+        });
+    }
+
+    // 🔥 پاکسازی URL از پارامترهای موقت
+    function cleanURL() {
+        const url = new URL(window.location.href);
+        const params = url.searchParams;
+        
+        // حذف پارامترهای موقت
+        if (params.has('_lang') || params.has('_refresh') || params.has('_cache') || params.has('_force')) {
+            params.delete('_lang');
+            params.delete('_refresh');
+            params.delete('_cache');
+            params.delete('_force');
+            
+            // جایگزینی تاریخچه بدون رفرش
+            window.history.replaceState({}, '', url.toString());
+        }
+    }
+
+    // 🔥 غیرفعال کردن کش برای صفحات حساس
+    function disableCaching() {
+        // اضافه کردن پارامتر ضد کش به تمام لینک‌های داخلی
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('a');
+            if (link && link.href && link.href.includes(window.location.hostname)) {
+                const url = new URL(link.href);
+                if (!url.searchParams.has('_cache')) {
+                    url.searchParams.set('_cache', Date.now().toString(36));
+                    link.href = url.toString();
+                }
+            }
+        });
+    }
+
+    // 🔥 مقداردهی اولیه
+    document.addEventListener('DOMContentLoaded', function() {
+        initLanguageSwitcher();
+        cleanURL();
+        disableCaching();
+    });
+
+    // 🔥 مدیریت قبل از رفرش
+    window.addEventListener('beforeunload', function() {
+        // اضافه کردن پارامتر ضد کش به sessionStorage
+        sessionStorage.setItem('last_cache_buster', Date.now().toString());
+    });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
