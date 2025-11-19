@@ -1,0 +1,151 @@
+@font-face {
+    font-family: Iphone;
+    font-style: normal;
+    font-weight: normal;
+    src: url("./SFArabic-Regular.woff") format("woff");
+}
+
+body {
+    background-image: url("./Back.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    color: aliceblue;
+    font-family: Iphone;
+}
+
+.Meno {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px;
+}
+
+.Logo {
+    width: 174px;
+    height: 26px;
+    font-size: 20px;
+}
+
+.Meno2 {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+}
+
+.Meno3 {
+    padding: 6px 12px;
+    border-radius: 10px;
+    border: 1px solid green;
+    text-decoration: none;
+    color: aliceblue;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.Meno3:hover {
+    background-color: rgba(0, 128, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.Meno3:active {
+    transform: translateY(0);
+}
+.floating-products {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    gap: 20px;
+    z-index: 1000;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.product-card {
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid green;
+    border-radius: 10px;
+    padding: 15px;
+    width: 200px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 255, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 255, 0, 0.5);
+}
+
+.product-image {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.product-title {
+    font-size: 16px;
+    margin: 10px 0;
+    color: #fff;
+}
+
+.product-price {
+    font-size: 14px;
+    color: #4CAF50;
+    margin: 10px 0;
+}
+
+.buy-btn {
+    background: linear-gradient(45deg, #4CAF50, #2E7D32);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.buy-btn:hover {
+    background: linear-gradient(45deg, #2E7D32, #1B5E20);
+    transform: scale(1.05);
+}
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 20px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+@media (min-width: 768px) {
+    .floating-products {
+        flex-direction: row;
+    }
+}
+@media (max-width: 767px) {
+    .floating-products {
+        flex-direction: column;
+        width: 90%;
+    }
+}
+@media (min-width: 768px) {
+    body {
+        background-size: contain;
+        background-color: #000;
+    }
+}
+
