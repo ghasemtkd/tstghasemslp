@@ -1,374 +1,40 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚀 ماشین زمان شخصی</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            color: white;
-            text-align: center;
-            padding: 20px;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-        
-        .time-machine {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 40px 30px;
-            border-radius: 25px;
-            backdrop-filter: blur(15px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            max-width: 500px;
-            width: 100%;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .time-machine::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-            transform: rotate(45deg);
-            animation: shine 3s infinite;
-        }
-        
-        @keyframes shine {
-            0% { transform: rotate(45deg) translateX(-100%); }
-            100% { transform: rotate(45deg) translateX(100%); }
-        }
-        
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 30px;
-            background: linear-gradient(45deg, #ff6b6b, #ffd93d, #6bcf7f);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-        }
-        
-        .time-display {
-            font-size: 3em;
-            font-weight: bold;
-            margin: 30px 0;
-            text-shadow: 0 0 20px #00ffff;
-            color: #00ffff;
-        }
-        
-        .controls {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin: 30px 0;
-            flex-wrap: wrap;
-        }
-        
-        .btn {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
-            color: white;
-            border: none;
-            padding: 15px 25px;
-            border-radius: 50px;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
-        }
-        
-        .btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.6);
-        }
-        
-        .btn:active {
-            transform: translateY(-2px);
-        }
-        
-        .memories {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        
-        .memory-item {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px;
-            margin: 8px 0;
-            border-radius: 10px;
-            border-left: 4px solid #ffd93d;
-            text-align: right;
-        }
-        
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-        }
-        
-        .achievement {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            background: linear-gradient(45deg, #ffd93d, #ff6b6b);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transition: transform 0.5s;
-            z-index: 1000;
-        }
-        
-        .achievement.show {
-            transform: translate(-50%, -50%) scale(1);
-        }
-    </style>
+    <title>Document</title>
+    <link rel="stylesheet" href="./Tamrin.css">
 </head>
 <body>
-    <div class="particles" id="particles"></div>
-    
-    <div class="time-machine">
-        <h1>⏰ ماشین زمان شخصی</h1>
-        
-        <div class="time-display" id="currentTime">در حال بارگذاری...</div>
-        
-        <div class="controls">
-            <button class="btn" onclick="addMemory()">➕ ثبت خاطره</button>
-            <button class="btn" onclick="travelToPast()">⏪ سفر به گذشته</button>
-            <button class="btn" onclick="travelToFuture()">⏩ سفر به آینده</button>
-            <button class="btn" onclick="discoverSecret()">🔍 کشف راز</button>
-        </div>
-        
-        <div class="memories" id="memoriesContainer">
-            <h3>📖 خاطرات ثبت شده:</h3>
-            <div id="memoriesList"></div>
-        </div>
-        
-        <div class="stats">
-            <p>🕒 زمان سپری شده: <span id="timeSpent">0</span> ثانیه</p>
-            <p>⭐ امتیاز: <span id="score">0</span></p>
+    <div class="Meno">
+        <p style="width: 150px;">ورود|عضویت</p>
+        <div style="display: flex; align-items: center;justify-content: end;">
+            <h1 class="Logo">𝑩𝒍𝒂𝒄𝒌 𝑴𝒂𝒓𝒌𝒆𝒕</h1>
+            <img style="width: 10%; height: 30%;" src="./Ghasem_slp.png" alt="">
         </div>
     </div>
     
-    <div class="achievement" id="achievement">
-        <h3>🎉 دستاورد جدید!</h3>
-        <p id="achievementText"></p>
+    <div class="Meno2">
+        <a href="#" class="Meno3">قاتل</a>
+        <a href="#" class="Meno3">اسلحه</a>
+        <a href="#" class="Meno3">ماواد</a>
+    </div>
+    <div class="floating-products" id="floatingProducts">
+        <div class="product-card">
+            <img src="./Ghatel2.jpeg" alt="محصول ۱" class="product-image">
+            <h3 class="product-title">Amir Janson</h3>
+            <p class="product-price">قیمت: 1,200,000 تومان</p>
+            <button class="buy-btn">افزودن به سبد خرید</button>
+        </div>
+        <div class="product-card">
+            <img src="./Ghatel.jpg" alt="محصول ۲" class="product-image">
+            <h3 class="product-title">Shervin Kochak</h3>
+            <p class="product-price">قیمت: 950,000 تومان</p>
+            <button class="buy-btn">افزودن به سبد خرید</button>
+        </div>
     </div>
 
-    <script>
-        // متغیرهای全局
-        let memories = JSON.parse(localStorage.getItem('memories')) || [];
-        let score = parseInt(localStorage.getItem('score')) || 0;
-        let timeSpent = parseInt(localStorage.getItem('timeSpent')) || 0;
-        let secretFound = localStorage.getItem('secretFound') === 'true';
-
-        // ایجاد ذرات متحرک
-        function createParticles() {
-            const particles = document.getElementById('particles');
-            for (let i = 0; i < 50; i++) {
-                const particle = document.createElement('div');
-                particle.style.position = 'absolute';
-                particle.style.width = Math.random() * 5 + 2 + 'px';
-                particle.style.height = particle.style.width;
-                particle.style.background = `hsl(${Math.random() * 360}, 70%, 60%)`;
-                particle.style.borderRadius = '50%';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = Math.random() * 100 + '%';
-                particle.style.animation = `float ${Math.random() * 10 + 5}s infinite linear`;
-                particles.appendChild(particle);
-            }
-        }
-
-        // به روز رسانی زمان
-        function updateTime() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('fa-IR');
-            document.getElementById('currentTime').textContent = timeString;
-            
-            timeSpent++;
-            document.getElementById('timeSpent').textContent = timeSpent;
-            localStorage.setItem('timeSpent', timeSpent);
-            
-            // دستاوردهای زمانی
-            if (timeSpent === 30) showAchievement('کاشف زمان! ⏰');
-            if (timeSpent === 60) showAchievement('سفر در زمان حرفه‌ای! 🚀');
-        }
-
-        // ثبت خاطره جدید
-        function addMemory() {
-            const memoriesList = [
-                "امروز یک ایده ناب داشتم! 💡",
-                "با دوستانم وقت خوبی گذراندم 👥",
-                "یک مهارت جدید یاد گرفتم 🎯",
-                "به هدفی که داشتم رسیدم 🏆",
-                "یک کشف جالب کردم 🔍",
-                "روزم پر از انرژی مثبت بود ✨",
-                "چالش جدیدی رو شروع کردم 🚀"
-            ];
-            
-            const randomMemory = memoriesList[Math.floor(Math.random() * memoriesList.length)];
-            memories.push({
-                text: randomMemory,
-                timestamp: new Date().toLocaleString('fa-IR')
-            });
-            
-            localStorage.setItem('memories', JSON.stringify(memories));
-            updateMemoriesList();
-            
-            score += 10;
-            updateScore();
-            
-            showAchievement('خاطره جدید ثبت شد! 📝');
-        }
-
-        // سفر به گذشته
-        function travelToPast() {
-            document.body.style.animation = 'timeTravel 1s';
-            setTimeout(() => {
-                document.body.style.animation = '';
-                if (memories.length > 0) {
-                    const randomMemory = memories[Math.floor(Math.random() * memories.length)];
-                    showAchievement(`سفر به گذشته: ${randomMemory.text}`);
-                } else {
-                    showAchievement('هنوز خاطره‌ای ثبت نکردی! 📖');
-                }
-            }, 1000);
-            
-            score += 5;
-            updateScore();
-        }
-
-        // سفر به آینده
-        function travelToFuture() {
-            const futures = [
-                "در آینده یک مخترع مشهور خواهی شد! 🔬",
-                "به تمام آرزوهایت خواهی رسید 🌟",
-                "سفر به کهکشان در انتظار توست 🚀",
-                "یک کشف بزرگ در پیش داری 💎",
-                "دنیا را متحول خواهی کرد 🌍"
-            ];
-            
-            document.body.style.animation = 'futureTravel 1s';
-            setTimeout(() => {
-                document.body.style.animation = '';
-                const randomFuture = futures[Math.floor(Math.random() * futures.length)];
-                showAchievement(randomFuture);
-            }, 1000);
-            
-            score += 8;
-            updateScore();
-        }
-
-        // کشف راز مخفی
-        function discoverSecret() {
-            if (!secretFound && score >= 50) {
-                secretFound = true;
-                localStorage.setItem('secretFound', 'true');
-                showAchievement('🎊 راز مخفی کشف شد! تو یک نابغه زمانی هستی! 🌟');
-                
-                // افکت ویژه
-                document.body.style.background = 'linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcf7f)';
-                setTimeout(() => {
-                    document.body.style.background = 'linear-gradient(135deg, #0f2027, #203a43, #2c5364)';
-                }, 3000);
-            } else if (!secretFound) {
-                showAchievement('🔐 برای کشف راز مخفی، حداقل 50 امتیاز نیاز داری!');
-            } else {
-                showAchievement('✨ قبلاً راز مخفی رو کشف کردی! باهوشی!');
-            }
-        }
-
-        // نمایش دستاورد
-        function showAchievement(text) {
-            const achievement = document.getElementById('achievement');
-            const achievementText = document.getElementById('achievementText');
-            
-            achievementText.textContent = text;
-            achievement.classList.add('show');
-            
-            setTimeout(() => {
-                achievement.classList.remove('show');
-            }, 3000);
-        }
-
-        // به روز رسانی لیست خاطرات
-        function updateMemoriesList() {
-            const memoriesList = document.getElementById('memoriesList');
-            memoriesList.innerHTML = '';
-            
-            memories.slice(-5).forEach(memory => {
-                const memoryItem = document.createElement('div');
-                memoryItem.className = 'memory-item';
-                memoryItem.innerHTML = `
-                    <strong>${memory.text}</strong>
-                    <br><small>${memory.timestamp}</small>
-                `;
-                memoriesList.appendChild(memoryItem);
-            });
-        }
-
-        // به روز رسانی امتیاز
-        function updateScore() {
-            document.getElementById('score').textContent = score;
-            localStorage.setItem('score', score);
-        }
-
-        // راه اندازی اولیه
-        function init() {
-            createParticles();
-            updateTime();
-            updateMemoriesList();
-            updateScore();
-            
-            setInterval(updateTime, 1000);
-            
-            // اضافه کردن استایل انیمیشن
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes float {
-                    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-                    100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
-                }
-                
-                @keyframes timeTravel {
-                    0% { filter: hue-rotate(0deg) blur(0px); }
-                    50% { filter: hue-rotate(180deg) blur(10px); }
-                    100% { filter: hue-rotate(0deg) blur(0px); }
-                }
-                
-                @keyframes futureTravel {
-                    0% { filter: brightness(1) contrast(1); }
-                    50% { filter: brightness(1.5) contrast(2); }
-                    100% { filter: brightness(1) contrast(1); }
-                }
-            `;
-            document.head.appendChild(style);
-        }
-
-        // شروع برنامه
-        init();
-    </script>
+    <script src="./Tamrin.js"></script>
 </body>
 </html>
