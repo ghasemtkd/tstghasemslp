@@ -1,0 +1,843 @@
+<!doctype html>
+<html lang="fa">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Haunted Ultra-Hyper AI — All In </title>
+<style>
+  :root{
+    --ui-ghost: rgba(255,255,255,0.06);
+    --accent: #ff4d6d;
+    --neon: rgba(123,97,255,0.85);
+    --dialog-bg: rgba(255,255,255,0.95);
+    --shadow: 0 10px 30px rgba(0,0,0,0.6);
+    font-family: "Vazirmatn", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial;
+  }
+  html,body{height:100%;margin:0;background:#000;overflow:hidden}
+  
+  /* Loading Screen */
+  #loadingScreen {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 1s ease-in-out;
+  }
+  
+  .loading-content {
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .neon-loader {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    position: relative;
+    margin: 0 auto 2rem;
+  }
+  
+  .neon-loader::before,
+  .neon-loader::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    animation: pulse 2s linear infinite;
+  }
+  
+  .neon-loader::before {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #ff4d6d, #7b61ff, #25d366);
+    filter: blur(10px);
+    opacity: 0.7;
+  }
+  
+  .neon-loader::after {
+    width: 80%;
+    height: 80%;
+    top: 10%;
+    left: 10%;
+    background: linear-gradient(45deg, #7b61ff, #ff4d6d, #3b99f6);
+    animation: pulse 2s linear infinite 0.5s;
+    filter: blur(5px);
+    opacity: 0.5;
+  }
+  
+  .loading-text {
+    font-size: 1.2rem;
+    color: #fff;
+    text-align: center;
+    margin-top: 1rem;
+    position: relative;
+  }
+  
+  .loading-text span {
+    position: relative;
+    display: inline-block;
+    animation: loadingText 2s ease-in-out infinite;
+  }
+  
+  .loading-text span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-text span:nth-child(3) { animation-delay: 0.4s; }
+  .loading-text span:nth-child(4) { animation-delay: 0.6s; }
+  .loading-text span:nth-child(5) { animation-delay: 0.8s; }
+  .loading-text span:nth-child(6) { animation-delay: 1s; }
+  .loading-text span:nth-child(7) { animation-delay: 1.2s; }
+  
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.7; }
+    50% { transform: scale(1.2); opacity: 0.9; }
+  }
+  
+  @keyframes loadingText {
+    0%, 100% { transform: translateY(0); opacity: 0.5; }
+    50% { transform: translateY(-10px); opacity: 1; }
+  }
+  
+  /* Welcome Page */
+  #welcomeScreen {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at center, #0a0a0c 0%, #000 100%);
+    z-index: 99998;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    animation: welcomeFadeIn 0.8s ease-out forwards;
+  }
+  
+  @keyframes welcomeFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .welcome-card {
+    background: linear-gradient(145deg, rgba(20,20,25,0.9), rgba(10,10,12,0.8));
+    border-radius: 24px;
+    padding: 3rem 2rem;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    border: 1px solid rgba(123,97,255,0.2);
+    box-shadow: 
+      0 20px 40px rgba(0,0,0,0.5),
+      inset 0 1px 0 rgba(255,255,255,0.1);
+    backdrop-filter: blur(20px) saturate(180%);
+    transform: translateY(30px);
+    animation: cardSlideUp 0.6s ease-out 0.3s forwards;
+  }
+  
+  @keyframes cardSlideUp {
+    to { transform: translateY(0); }
+  }
+  
+  .welcome-title {
+    color: #fff;
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(45deg, #ff4d6d, #7b61ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(123,97,255,0.3);
+  }
+  
+  .welcome-subtitle {
+    color: rgba(255,255,255,0.8);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+  
+  .welcome-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin: 2rem 0;
+  }
+  
+  .feature {
+    background: rgba(255,255,255,0.05);
+    padding: 1rem;
+    border-radius: 12px;
+    width: 120px;
+    transition: all 0.3s ease;
+  }
+  
+  .feature:hover {
+    background: rgba(123,97,255,0.1);
+    transform: translateY(-5px);
+  }
+  
+  .feature-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .feature-text {
+    color: rgba(255,255,255,0.9);
+    font-size: 0.9rem;
+  }
+  
+  .welcome-button {
+    background: linear-gradient(45deg, #ff4d6d, #7b61ff);
+    color: white;
+    border: none;
+    padding: 1rem 2.5rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+    box-shadow: 0 10px 20px rgba(123,97,255,0.3);
+  }
+  
+  .welcome-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(123,97,255,0.4);
+  }
+  
+  .welcome-button:active {
+    transform: translateY(-1px);
+  }
+  
+  /* Main App Styles */
+  .bg-layer{
+    position:fixed; inset:0; background-repeat:no-repeat; background-position:center; background-size:cover;
+    pointer-events:none; will-change:transform; z-index:0;
+  }
+  #bg-back{filter: blur(2px) saturate(1.05) contrast(.95); transform: translateZ(0) scale(1.02); opacity:0.95}
+  #bg-mid{mix-blend-mode:overlay; opacity:0.8; filter:contrast(1.05) saturate(1.1);}
+  #bg-front{opacity:0.65; filter:brightness(.85) blur(.8px);}
+
+  canvas#mainCanvas{position:fixed; inset:0; z-index:2; display:block; pointer-events:none;}
+
+  #mainForm {
+    position: fixed; z-index:9997;
+    left:50%; top:50%; transform:translate(-50%,-50%);
+    max-width:520px; width:92%;
+    background: linear-gradient(180deg, rgba(10,10,12,0.6), rgba(10,10,12,0.55));
+    border-radius:18px; padding:22px;
+    box-shadow: var(--shadow);
+    border:1px solid rgba(255,255,255,0.04);
+    text-align:center; color:#fff; backdrop-filter: blur(6px) saturate(120%);
+    display: none;
+  }
+  #mainForm h2{margin:6px 0 8px; font-size:20px}
+  #mainForm p{margin:0 0 14px; color:rgba(255,255,255,0.85)}
+
+  .messenger{
+    position:fixed; width:56px; height:56px; border-radius:50%;
+    background-size:cover; background-position:center;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.7);
+    z-index:6; cursor:pointer; user-select:none;
+    transform-origin:center; transition: transform .18s ease;
+    will-change:transform,left,top;
+    display: none;
+  }
+  .messenger:active{ transform: scale(.88) !important; }
+
+  .halo{
+    position:fixed; width:60px;height:60px;border-radius:50%;
+    filter:blur(12px); opacity:.8; pointer-events:none; z-index:5; mix-blend-mode:screen;
+    display: none;
+  }
+
+  #dialog{
+    position:fixed; z-index:9999; pointer-events:none;
+    background:var(--dialog-bg); color:#111; font-weight:700;
+    padding:10px 16px; border-radius:12px; border:2px solid rgba(0,0,0,0.12);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    transform-origin:center; opacity:0; transition:opacity .35s, transform .35s;
+    white-space:nowrap;
+  }
+
+  .sk-neon{
+    position:fixed; z-index:1; pointer-events:none; inset:0;
+    mix-blend-mode:screen; opacity:0.7;
+  }
+
+  @media (max-width:520px){
+    .messenger{ width:44px; height:44px; }
+    .halo{ width:62px; height:62px; }
+    .welcome-card { padding: 2rem 1rem; }
+    .welcome-title { font-size: 1.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div id="loadingScreen">
+  <div class="loading-content">
+    <div class="neon-loader"></div>
+    <div class="loading-text">
+      <span>در</span>
+      <span>حال</span>
+      <span>بارگزاری</span>
+      <span>...</span>
+    </div>
+  </div>
+</div>
+
+<!-- Welcome Screen -->
+<div id="welcomeScreen">
+  <div class="welcome-card">
+    <h1 class="welcome-title">خوش آمدید! 👋</h1>
+    <p class="welcome-subtitle">
+      به تجربه تعاملی و سه‌بعدی ما خوش آمدید.<br>
+      اینجا می‌توانید با آیکون‌های هوشمند تعامل داشته باشید و از انیمیشن‌های جذاب لذت ببرید.
+    </p>
+    
+    <div class="welcome-features">
+      <div class="feature">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-text">تعامل هوشمند</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">✨</div>
+        <div class="feature-text">انیمیشن جذاب</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🤖</div>
+        <div class="feature-text">AI پیشرفته</div>
+      </div>
+    </div>
+    
+    <button id="enterButton" class="welcome-button">
+      ورود به تجربه
+    </button>
+    
+    <p style="font-size:0.8rem; color:rgba(255,255,255,0.5); margin-top:2rem;">
+      با کلیک بر روی دکمه، اولین ورود شما ثبت خواهد شد.
+    </p>
+  </div>
+</div>
+
+<!-- Parallax background layers -->
+<div id="bg-back" class="bg-layer" style="background-image:url('./backiee-312480-landscape.jpg');"></div>
+<div id="bg-mid" class="bg-layer" style="background-image:url('./backiee-312480-landscape.jpg'); transform:scale(1.06)"></div>
+<div id="bg-front" class="bg-layer" style="background-image:url('./backiee-312480-landscape.jpg'); transform:scale(1.1)"></div>
+
+<!-- Canvas used for skeleton, trails, particles -->
+<canvas id="mainCanvas"></canvas>
+
+<!-- Neon layer (for under-glow effects) -->
+<canvas id="neonCanvas" class="sk-neon"></canvas>
+
+<!-- Welcome / first-visit card -->
+<div id="mainForm" aria-live="polite"></div>
+
+<!-- Messenger icons & halos -->
+<div id="whatsapp" class="messenger" style="background-image:url('./vecteezy_whatsapp-logo-icon_21495946.png')"></div>
+<div id="ig"       class="messenger" style="background-image:url('./vecteezy_instagram-logo-icon_21495954.png')"></div>
+<div id="telegram" class="messenger" style="background-image:url('./d55851ab87ee65b7a7c772c52f962df9.png')"></div>
+
+<div id="halo-w" class="halo" style="background:radial-gradient(circle, rgba(37,211,102,0.35), rgba(37,211,102,0.02));"></div>
+<div id="halo-i" class="halo" style="background:radial-gradient(circle, rgba(255,64,129,0.35), rgba(255,64,129,0.02));"></div>
+<div id="halo-t" class="halo" style="background:radial-gradient(circle, rgba(59,153,246,0.35), rgba(59,153,246,0.02));"></div>
+
+<!-- Dialog bubble -->
+<div id="dialog"></div>
+
+<script>
+/* ===========================================================
+   Ultra-Hyper AI Animated — Single file
+   =========================================================== */
+
+// مدیریت وضعیت اولیه
+let isFirstVisit = !localStorage.getItem('visited');
+let isLoading = true;
+let loadingProgress = 0;
+let mainAppInitialized = false;
+
+// ============ 1. LOADING SCREEN ============
+function showLoadingScreen() {
+  const loadingScreen = document.getElementById('loadingScreen');
+  loadingScreen.style.display = 'flex';
+  
+  // شبیه‌سازی بارگزاری
+  const loadingInterval = setInterval(() => {
+    loadingProgress += Math.random() * 20;
+    if (loadingProgress >= 100) {
+      loadingProgress = 100;
+      clearInterval(loadingInterval);
+      
+      // پس از اتمام بارگزاری
+      setTimeout(() => {
+        loadingScreen.style.opacity = '0';
+        setTimeout(() => {
+          loadingScreen.style.display = 'none';
+          isLoading = false;
+          
+          // اگر اولین ورود است، صفحه خوشامدگویی را نشان بده
+          if (isFirstVisit) {
+            showWelcomeScreen();
+          } else {
+            // در غیر این صورت مستقیماً وارد برنامه شو
+            startMainApp();
+          }
+        }, 1000);
+      }, 500);
+    }
+  }, 200);
+}
+
+// ============ 2. WELCOME SCREEN ============
+function showWelcomeScreen() {
+  const welcomeScreen = document.getElementById('welcomeScreen');
+  welcomeScreen.style.display = 'flex';
+  
+  // اضافه کردن انیمیشن‌های اضافی
+  const features = document.querySelectorAll('.feature');
+  features.forEach((feature, index) => {
+    feature.style.animation = `cardSlideUp 0.5s ease-out ${0.3 + (index * 0.1)}s forwards`;
+    feature.style.opacity = '0';
+  });
+  
+  // رویداد کلیک برای دکمه ورود
+  document.getElementById('enterButton').addEventListener('click', () => {
+    // ثبت اولین بازدید
+    localStorage.setItem('visited', 'true');
+    isFirstVisit = false;
+    
+    // انیمیشن خروج از صفحه خوشامدگویی
+    welcomeScreen.style.opacity = '0';
+    welcomeScreen.style.transform = 'scale(0.9)';
+    
+    setTimeout(() => {
+      welcomeScreen.style.display = 'none';
+      // ریفرش کامل صفحه برای اجرای برنامه اصلی
+      location.reload();
+    }, 500);
+  });
+}
+
+// ============ 3. START MAIN APP ============
+function startMainApp() {
+  // نمایش المان‌های اصلی
+  document.querySelectorAll('.messenger, .halo').forEach(el => {
+    el.style.display = 'block';
+  });
+  
+  // شروع انیمیشن‌های اصلی
+  initMainApp();
+}
+
+// ============ 4. MAIN APPLICATION CODE ============
+function initMainApp() {
+  if (mainAppInitialized) return;
+  mainAppInitialized = true;
+  
+  console.log('Main app initialized');
+  
+  /* ---------- Setup canvases ---------- */
+  const canvas = document.getElementById('mainCanvas');
+  const ctx = canvas.getContext('2d');
+  const neon = document.getElementById('neonCanvas');
+  const nctx = neon.getContext('2d');
+
+  function resizeAll(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    neon.width = window.innerWidth;
+    neon.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeAll);
+  resizeAll();
+
+  /* ---------- Parallax background ---------- */
+  const bgBack = document.getElementById('bg-back');
+  const bgMid  = document.getElementById('bg-mid');
+  const bgFront= document.getElementById('bg-front');
+
+  let pointer = {x: innerWidth/2, y: innerHeight/2};
+  window.addEventListener('pointermove', (e)=> {
+    pointer.x = e.clientX; pointer.y = e.clientY;
+    const cx = (pointer.x / innerWidth - 0.5);
+    const cy = (pointer.y / innerHeight - 0.5);
+    bgBack.style.transform = `translate(${cx*6}px, ${cy*6}px) scale(1.02)`;
+    bgMid.style.transform  = `translate(${cx*12}px, ${cy*12}px) scale(1.06)`;
+    bgFront.style.transform= `translate(${cx*20}px, ${cy*20}px) scale(1.1)`;
+  });
+
+  /* ---------- WebAudio ---------- */
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  function playBeep(freq=440, time=0.08, type='sine', gain=0.03){
+    try {
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = type;
+      o.frequency.value = freq;
+      g.gain.value = gain;
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start();
+      o.stop(audioCtx.currentTime + time);
+    } catch(e){ /* ignore */ }
+  }
+
+  /* ---------- Skeleton ---------- */
+  let mouse = {x: innerWidth/2, y: innerHeight/2};
+  addEventListener('pointermove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+  let sk = { x: innerWidth/2, y: innerHeight/2, vx:0, vy:0, state:'follow', respawnTimer:null, brokenParticles:[] };
+
+  function drawSkeleton(x,y, t){
+    nctx.clearRect(0,0,neon.width, neon.height);
+    const g = nctx.createRadialGradient(x,y, 10, x,y, 220);
+    g.addColorStop(0, 'rgba(160,120,255,0.14)');
+    g.addColorStop(1, 'rgba(160,120,255,0)');
+    nctx.fillStyle = g; nctx.fillRect(0,0,neon.width, neon.height);
+
+    const bob = Math.sin(t*0.002)*2;
+    ctx.lineWidth = 3 + (Math.abs(sk.vx)+Math.abs(sk.vy))*0.02;
+    ctx.strokeStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(x, y-20 + bob, 14, 0, Math.PI*2);
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(255,40,40,0.98)';
+    ctx.beginPath(); ctx.arc(x-5, y-25 + bob, 3, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x+5, y-25 + bob, 3, 0, Math.PI*2); ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(x, y-6 + bob); ctx.lineTo(x, y+30 + bob);
+    ctx.moveTo(x, y); ctx.lineTo(x-22, y-10 + bob);
+    ctx.moveTo(x, y); ctx.lineTo(x+22, y-10 + bob);
+    ctx.moveTo(x, y+30); ctx.lineTo(x-18, y+55);
+    ctx.moveTo(x, y+30); ctx.lineTo(x+18, y+55);
+    ctx.stroke();
+  }
+
+  function explodeSkeleton(){
+    sk.brokenParticles = [];
+    for(let i=0;i<40;i++){
+      sk.brokenParticles.push({
+        x: sk.x, y: sk.y,
+        vx: (Math.random()-0.5)*40, vy:(Math.random()-0.5)*40,
+        r: 2 + Math.random()*5, life: 1 - Math.random()*0.6
+      });
+    }
+    playBeep(120, 0.12, 'sawtooth', 0.05);
+    clearTimeout(sk.respawnTimer);
+    sk.respawnTimer = setTimeout(()=> {
+      sk.x = innerWidth/2; sk.y = innerHeight/2; sk.vx = sk.vy = 0; sk.state='follow';
+      for(let i=0;i<8;i++){ setTimeout(()=> playBeep(600 + i*40, 0.02, 'sine', 0.01), i*40); }
+    }, 3000);
+  }
+
+  let lastT = performance.now();
+  function renderAll(t){
+    const dt = t - lastT;
+    lastT = t;
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+
+    if(sk.state === 'follow'){
+      const dx = mouse.x - sk.x;
+      const dy = mouse.y - sk.y;
+      sk.vx += dx * 0.018;
+      sk.vy += dy * 0.018;
+      sk.vx *= 0.9; sk.vy *= 0.9;
+      sk.x += sk.vx * (dt/16);
+      sk.y += sk.vy * (dt/16);
+
+      if(sk.x < 24 || sk.x > canvas.width - 24 || sk.y < 24 || sk.y > canvas.height - 24){
+        sk.state = 'broken';
+        explodeSkeleton();
+      } else {
+        drawSkeleton(sk.x, sk.y, t);
+      }
+    } else if(sk.state === 'broken'){
+      sk.brokenParticles.forEach(p => {
+        p.x += p.vx * (dt/16);
+        p.y += p.vy * (dt/16);
+        p.vy += 0.6 * (dt/16);
+        p.r *= 0.995;
+        ctx.fillStyle = 'rgba(255,255,255,0.95)';
+        ctx.beginPath(); ctx.arc(p.x, p.y, Math.max(0.8,p.r), 0, Math.PI*2); ctx.fill();
+      });
+    }
+    requestAnimationFrame(renderAll);
+  }
+  requestAnimationFrame(renderAll);
+
+  /* ---------- Messenger AI ---------- */
+  const agents = [
+    { id:'whatsapp', el:document.getElementById('whatsapp'), halo:document.getElementById('halo-w'),
+      x:120, y:120, vx:3.2, vy:2.6, radius:40, color:[37,211,102], freeze:false, lastCollision:0, trail:[] },
+    { id:'ig', el:document.getElementById('ig'), halo:document.getElementById('halo-i'),
+      x:360, y:300, vx:-3.6, vy:2.8, radius:40, color:[255,64,129], freeze:false, lastCollision:0, trail:[] },
+    { id:'telegram', el:document.getElementById('telegram'), halo:document.getElementById('halo-t'),
+      x:760, y:150, vx:2.6, vy:-3.4, radius:40, color:[59,153,246], freeze:false, lastCollision:0, trail:[] }
+  ];
+
+  const dialog = document.getElementById('dialog');
+
+  function clampAgent(a){
+    a.x = Math.max(6, Math.min(innerWidth - (a.el.clientWidth || 86) - 6, a.x));
+    a.y = Math.max(6, Math.min(innerHeight - (a.el.clientHeight || 86) - 6, a.y));
+  }
+
+  function drawTrails(){
+    ctx.fillStyle = 'rgba(0,0,0,0.08)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    agents.forEach(a=>{
+      a.trail.push({x:a.x + a.radius/2, y:a.y + a.radius/2, life:120});
+      if(a.trail.length > 60) a.trail.shift();
+
+      for(let i=0;i<a.trail.length;i++){
+        const p = a.trail[i];
+        const alpha = (i / a.trail.length) * 0.35;
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(${a.color[0]},${a.color[1]},${a.color[2]},${alpha})`;
+        ctx.arc(p.x, p.y, (i/ a.trail.length) * 18, 0, Math.PI*2);
+        ctx.fill();
+      }
+    });
+  }
+
+  function timeToCollision(A, B){
+    const rx = B.x - A.x, ry = B.y - A.y;
+    const rvx = B.vx - A.vx, rvy = B.vy - A.vy;
+    const r2 = rx*rx + ry*ry;
+    const v2 = rvx*rvx + rvy*rvy;
+    if(v2 < 0.01) return {will:false, t:Infinity};
+    const t = -(rx*rvx + ry*rvy) / v2;
+    if(t <= 0 || t > 2.2) return {will:false, t:Infinity};
+    const cx = A.x + A.vx * t, cy = A.y + A.vy * t;
+    const distAtT = Math.hypot((B.x + B.vx * t) - cx, (B.y + B.vy * t) - cy);
+    return {will: distAtT < (A.radius + B.radius) * 1.1, t, cx, cy};
+  }
+
+  function aiDecide(A, B){
+    const third = agents.find(x => x !== A && x !== B);
+    const predict = timeToCollision(A,B);
+
+    if(predict.will){
+      const chanceCollision = 0.12;
+      const relSpeed = Math.hypot(A.vx - B.vx, A.vy - B.vy);
+      const luck = Math.random();
+      if(luck < chanceCollision && relSpeed > 1.6) {
+        return {action:'collide', at:predict};
+      } else {
+        if(third && Math.hypot(third.x - predict.cx, third.y - predict.cy) < 240){
+          const awayX = third.x - predict.cx, awayY = third.y - predict.cy;
+          const len = Math.hypot(awayX, awayY) || 1;
+          third.vx += (awayX/len) * 3.5;
+          third.vy += (awayY/len) * 3.5;
+          return {action:'avoid', agent: third, at:predict};
+        }
+        const roomA = Math.min(A.x, innerWidth - A.x) + Math.min(A.y, innerHeight - A.y);
+        const roomB = Math.min(B.x, innerWidth - B.x) + Math.min(B.y, innerHeight - B.y);
+        const dodger = roomA < roomB ? A : B;
+        const rx = B.x - A.x, ry = B.y - A.y;
+        const perp = {x:-ry, y:rx};
+        const plen = Math.hypot(perp.x, perp.y) || 1;
+        const sign = (Math.random() > 0.5) ? 1 : -1;
+        dodger.vx += (perp.x / plen) * 4 * sign;
+        dodger.vy += (perp.y / plen) * 4 * sign;
+        const other = (dodger === A) ? B : A;
+        other.vx *= 0.86; other.vy *= 0.86;
+        playBeep(600, 0.04, 'square', 0.01);
+        return {action:'swerve', agent:dodger, at:predict};
+      }
+    }
+    return {action:'none'};
+  }
+
+  function handleCollision(A,B, cx, cy){
+    const now = Date.now();
+    A.lastCollision = B.lastCollision = now;
+    A.freeze = true; B.freeze = true;
+    showCollisionDialog(cx, cy, A, B);
+    const saveA = {vx:A.vx, vy:A.vy}, saveB = {vx:B.vx, vy:B.vy};
+    playBeep(220, 0.22, 'sawtooth', 0.06);
+    A.vx = -saveA.vx * 0.6; A.vy = -saveA.vy * 0.6;
+    B.vx = -saveB.vx * 0.6; B.vy = -saveB.vy * 0.6;
+    
+    setTimeout(()=>{
+      A.vx = (Math.random()-0.5)*4 + (A.x < B.x ? -3 : 3);
+      A.vy = (Math.random()-0.5)*4;
+      B.vx = (Math.random()-0.5)*4 + (B.x < A.x ? -3 : 3);
+      B.vy = (Math.random()-0.5)*4;
+      A.freeze = B.freeze = false;
+    }, 3000);
+  }
+
+  const jokes = [
+    "داداش تو با چشم بسته رانندگی می‌کنی یا کلاً مغزتو آوردی تعمیرگاه؟! 🤦‍♂️",
+    "به قرآن یه بار دیگه بزنی بهم میدم جریمه‌اتو قوطی نوشابه کنن 😭",
+    "بخدا یه لحظه فکر کردم گوزن اومده جلوم، دیدم نه تویی!",
+    "آخه خاک بر سرت با این رانندگیت،وای GPS هم هنگ کرد 😐",
+    "بیا پایین حرف بزنیم! یعنی بیا وسط صفحه که ببینمت 👊🤣",
+    "من با تو تصادف کردم یا قطار شهری؟ چرا اینقدر سرعت داشتی؟",
+    "بیخیال! اصلاً به درک، من که بیمه بدنه دارم 😭",
+    "چی شد؟ خواب دیدی خلبانی؟ پُشتی رو ول کن 😭✈️",
+    "ببین همین الان برو آزمون راهنمایی و رانندگی، لطفاً قبول نشو…",
+    "چجوری تونستی تو فضای 2D با من تصادف کنی؟ افتخار بزرگیه واقعاً 😐😂",
+    "بوی گاز میاد… نکنه از مغزت باشه سوخته؟",
+    "وایسادی وسط جاده عکس پروفایل بگیری؟ 😂",
+    "مامانت گفته با گوشی بازی می‌کنی با من تصادف نکن؟ 🤣",
+    "لعنتی گردن من کج شد!",
+    "داداش اینجا پیست فرمول یک نیست، بپیچ!",
+    "خب؟ چی شد؟ فکر کردی GTA بازی می‌کنی؟! 🚗💥",
+    "داش گلم، تو الکی با من تصادف کردی که حرف بزنی نه؟ 😎",
+    "مخفت کردی برادر؟ یهو کوبیدی روم 😐",
+    "تو رو خدا به من نزن دیگه، من تازه از صافکاری برگشتم 😭",
+    "آبجی‌تو آوردی رانندگی؟ چرا انقد بد؟ 😂",
+    "من مقصر نیستم! تو نبودی؟ من نبودم! کی بود؟!",
+    "وقتی گفتن 'از چپ بران' منظورش این نبود که بیای تو مغز من 😒",
+    "ای بابا دوباره باید پرینت خسارت بگیرم",
+    "GPS همینجوری گفت 'برگشت غیرمجاز'…",
+    "من حس کردم یه سایه اومد طرفم… بعد دیدم تویی 😐",
+    "دوباره به من زدی؟ یعنی روحی؟ چرا از دور ظاهر شدی؟",
+    "نزن نزن نزن—آخ!",
+    "تو مطمئنی انسان پیج قبلی نیستی؟ 😭💀",
+    "«داداش چرا زدی به من؟!» «اِشتباه از تو بود، داشتم رد میشدم!»",
+    "«نگاه کن چه به سرم آوردی!» «برو خدا روزیتو جای دیگه بده 😭»",
+    "«دوباره خوردی بهم!» «قسم می‌خورم صفحه کوچیک بود!»",
+    "«چرا لایی کشیدی؟» «چون تو وسط جاده چرت میزدی!»",
+    "من رانندگی بلد نیستم، گناه دارم بهم نزن 😐",
+    "بزن بزن، من همینی که هستم 😭",
+    "داداش تقصیر تو نیست… من خیلی خوشگلم، همه می‌خوان بخورن بهم 😎",
+    "من یه آیکون بیچاره‌ام، چرا این همه خشونت؟",
+    "مسیرمون یکیه… ولی برخورد لازم نبود 😩",
+    "وقتی سرعتت از نور بیشتره، تصادف طبیعی میشه 🤣",
+    "از جلوت در رفتم، از پشت خوردی بهم. این هنر میخواد 😭",
+    "من دشمن تو نیستم، ولی تو داری تلاش می‌کنی باشم",
+    "نزن—کُد منو خطا میندازی 😭",
+    "من هنوز لود نشدم، وایسااا—",
+    "هوووووف، نزدیک بود CSSـم پاره شه!",
+    "داداش یه سانت مونده بود پاک شم از صفحه",
+    "من پُرفورمنس پایین دارم، باهام آروم برخورد کن 😂"
+  ];
+
+  function showCollisionDialog(x, y, A, B){
+    dialog.style.left = (x) + 'px';
+    dialog.style.top  = (y) + 'px';
+    dialog.innerText = jokes[Math.floor(Math.random()*jokes.length)];
+    dialog.style.opacity = 1;
+    dialog.style.transform = 'translateY(-6px) scale(1)';
+    A.halo.style.opacity = 1; B.halo.style.opacity = 1;
+    A.el.style.transform = 'scale(1.08) rotate(' + ((Math.random()-0.5)*8) + 'deg)';
+    B.el.style.transform = 'scale(1.08) rotate(' + ((Math.random()-0.5)*8) + 'deg)';
+    
+    setTimeout(()=>{
+      dialog.style.opacity = 0;
+      dialog.style.transform = 'translateY(0) scale(.98)';
+      A.halo.style.opacity = 0.28; B.halo.style.opacity = 0.28;
+      A.el.style.transform = ''; B.el.style.transform = '';
+    }, 3000);
+  }
+
+  function updateAgents(){
+    drawTrails();
+
+    const now = Date.now();
+    agents.forEach(a=>{
+      if(!a.freeze && Math.random() < 0.01){
+        a.vx += (Math.random()-0.5)*1.2; a.vy += (Math.random()-0.5)*1.2;
+      }
+
+      if(!a.freeze){
+        a.x += a.vx;
+        a.y += a.vy;
+      } else {
+        a.x += (Math.random()-0.5)*0.2; a.y += (Math.random()-0.5)*0.2;
+      }
+
+      if(a.x < 6){ a.x = 6; a.vx = Math.abs(a.vx) * 0.9; }
+      if(a.y < 6){ a.y = 6; a.vy = Math.abs(a.vy) * 0.9; }
+      if(a.x > innerWidth - 6 - (a.el.clientWidth || 86)){ a.x = innerWidth - 6 - (a.el.clientWidth || 86); a.vx = -Math.abs(a.vx) * 0.9; }
+      if(a.y > innerHeight - 6 - (a.el.clientHeight || 86)){ a.y = innerHeight - 6 - (a.el.clientHeight || 86); a.vy = -Math.abs(a.vy) * 0.9; }
+
+      a.el.style.left = a.x + 'px'; a.el.style.top = a.y + 'px';
+      a.halo.style.left = (a.x + (a.el.clientWidth||86)/2 - (a.halo.clientWidth||120)/2) + 'px';
+      a.halo.style.top  = (a.y + (a.el.clientHeight||86)/2 - (a.halo.clientHeight||120)/2) + 'px';
+      a.halo.style.opacity = 0.28;
+    });
+
+    for(let i=0;i<agents.length;i++){
+      for(let j=i+1;j<agents.length;j++){
+        const A = agents[i], B = agents[j];
+        if(Date.now() - Math.max(A.lastCollision||0, B.lastCollision||0) < 900) continue;
+        const predict = timeToCollision(A,B);
+        if(predict.will){
+          const decision = aiDecide(A,B);
+          if(decision.action === 'collide'){
+            handleCollision(A,B, predict.cx, predict.cy);
+          }
+        }
+      }
+    }
+
+    for(let a=0;a<agents.length;a++){
+      for(let b=a+1;b<agents.length;b++){
+        const A = agents[a], B = agents[b];
+        const dx = (A.x - B.x), dy = (A.y - B.y);
+        const d = Math.hypot(dx,dy);
+        if(d < (A.radius + B.radius) * 0.9){
+          if(!A.freeze && !B.freeze && Math.random() < 0.66){
+            handleCollision(A,B, (A.x+B.x)/2, (A.y+B.y)/2);
+          } else {
+            const nx = dx/d || 0.01; const ny = dy/d || 0.01;
+            const push = (A.radius + B.radius) - d + 3;
+            A.x += nx * (push*0.5); B.x -= nx * (push*0.5);
+            A.y += ny * (push*0.5); B.y -= ny * (push*0.5);
+          }
+        }
+      }
+    }
+
+    requestAnimationFrame(updateAgents);
+  }
+  requestAnimationFrame(updateAgents);
+
+  /* ---------- First visit welcome ---------- */
+  const mainForm = document.getElementById('mainForm');
+  if(localStorage.getItem('visited')){
+    mainForm.style.display = 'none';
+  } else {
+    mainForm.innerHTML = `
+      <h2>👏 تبریک! معما رو حل کردی!</h2>
+      <p>خیلی باحال شد — خوش‌ آمدی قهرمان. این پیام فقط یک‌بار نمایش داده می‌شود.</p>
+      <div style="display:flex; gap:10px; justify-content:center; margin-top:12px;">
+        <button id="refreshBtn" style="padding:12px 18px;border-radius:12px;border:0;background:linear-gradient(90deg,#ff5c7a,#7b61ff);color:white;font-weight:700">رفرش (ثبت بازدید)</button>
+        <button id="closeBtn" style="padding:12px 18px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff">بستن</button>
+      </div>
+      <p style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:12px">می‌تونی هر وقت خواستی صفحه رو ریست کنی.</p>
+    `;
+    document.getElementById('refreshBtn').addEventListener('click', ()=>{
+      localStorage.setItem('visited', '1');
+      mainForm.style.display = 'none';
+    });
+    document.getElementById('closeBtn').addEventListener('click', ()=>{
+      mainForm.style.display = 'none';
+    });
+  }
+
+  function resumeAudio(){ if(audioCtx.state === 'suspended') audioCtx.resume(); }
+  document.addEventListener('pointerdown', resumeAudio, {once:true});
+}
+
+// ============ START EVERYTHING ============
+document.addEventListener('DOMContentLoaded', () => {
+  // اول صفحه لودینگ را نشان بده
+  showLoadingScreen();
+});
+
+// شروع برنامه اصلی اگر اولین بار نیست
+if (!isFirstVisit && !isLoading) {
+  startMainApp();
+}
+</script>
+</body>
+</html>
